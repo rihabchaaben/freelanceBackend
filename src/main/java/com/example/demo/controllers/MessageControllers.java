@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dto.MessageDTO;
-import com.example.demo.dto.MessageGroupDTO;
+
 import com.example.demo.services.MessageService;
 import com.example.demo.services.UserAndGroupService;
 import org.springframework.beans.factory.annotation.Autowired;

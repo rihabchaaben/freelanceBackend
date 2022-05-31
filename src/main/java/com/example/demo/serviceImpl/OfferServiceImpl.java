@@ -1,5 +1,12 @@
 package com.example.demo.serviceImpl;
 
+import java.time.LocalDate;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +15,11 @@ import com.example.demo.exceptions.FreelancerNotFoundException;
 import com.example.demo.exceptions.OfferNotFoundException;
 import com.example.demo.models.Freelancer;
 import com.example.demo.models.Offer;
+import com.example.demo.models.User;
 import com.example.demo.repository.FreelancerRepository;
 import com.example.demo.repository.OfferRepository;
 import com.example.demo.services.OfferService;
+import com.example.demo.services.UserService;
 @Service
 public class OfferServiceImpl implements OfferService{
 	
@@ -18,6 +27,8 @@ public class OfferServiceImpl implements OfferService{
 	  FreelancerRepository freelancerRepository;
 	 @Autowired
 	  OfferRepository offerRepository;
+	 @Autowired
+	 UserService userservice;
 	@Override
 	public List<Offer> getAllOffers() {
 		// TODO Auto-generated method stub
@@ -32,11 +43,13 @@ public class OfferServiceImpl implements OfferService{
 	}
 
 	@Override
-	public void addOffer(Offer offer, Long id) throws Exception{
+	public void addOffer(Offer offer) throws Exception{
 		// TODO Auto-generated method stub
-		Freelancer free=freelancerRepository.findById(id).orElseThrow(() -> new
+		User user=userservice.currentUser();
+		Freelancer free=freelancerRepository.findById(user.getId()).orElseThrow(() -> new
 				FreelancerNotFoundException("freelancer not found "));
-		offer.setFreelancer(free);
+		System.out.println("freelancer id"+free.getId());
+		offer.setFreelancer(free); 
 		offerRepository.save(offer);
 		/*sDate1=offer.getEndDate();
 		sDate2=offer.getEndDate();
@@ -66,6 +79,27 @@ public class OfferServiceImpl implements OfferService{
 		offerr.setStartDate(offer.getStartDate());
 		offerr.setTitle(offer.getTitle());
 		offerRepository.save(offerr);
+		
+	}
+
+	@Override
+	public void deleteExpiredOffer() {
+		// TODO Auto-generated method stub
+		List<Offer> offers=getAllOffers();
+		LocalDate localDate = LocalDate.now();
+	for (Offer off:offers ) {
+		
+		LocalDate offerendDate=off.getEndDate().toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDate();
+int res=offerendDate.compareTo(localDate);
+		if( res< 0) {
+			offerRepository.delete(off);
+
+		}
+	
+	
+	}
 		
 	}
 

@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,17 +45,17 @@ public class OfferController {
 	  }
 		
 
-		@PreAuthorize("hasAnyRole('ROLE_FREELANCER','ROLE_ADMIN')")
-		@RequestMapping(value = "/offer/create/{id}", method = RequestMethod.POST)
+		@PreAuthorize("hasAnyRole('ROLE_FREELANCER')")
+		@RequestMapping(value = "/offer/create", method = RequestMethod.POST)
 
-		  ResponseEntity<?>CreateOffer(@Valid @RequestBody Offer offer,@PathVariable("id") Long id) throws Exception{
-			offerService.addOffer(offer,id);
+		  ResponseEntity<?>CreateOffer(@Valid @RequestBody Offer offer) throws Exception{
+			offerService.addOffer(offer);
 			//System.out.println("l id de category est"+subcategory.getCategory().getId());
 			return ResponseEntity.ok().body("offer added with success!");
 		  }
 		  
 
-		@PreAuthorize("hasAnyRole('ROLE_FREELANCER','ROLE_ADMIN')")
+		@PreAuthorize("hasAnyRole('ROLE_FREELANCER')")
 		@RequestMapping(value = "/offer/update/{id}", method = RequestMethod.PUT)
 		ResponseEntity<String>
 		  updateOffer(@PathVariable("id") Long id, @RequestBody Offer offer) { 		  
@@ -66,11 +67,19 @@ public class OfferController {
 
 		@PreAuthorize("hasAnyRole('ROLE_FREELANCER','ROLE_ADMIN')")
 		@RequestMapping(value = "/offer/delete/{id}", method = RequestMethod.DELETE)
-	 ResponseEntity<String> deleteSubCategory(@PathVariable("id") Long id) { 
+	 ResponseEntity<String> deleteOffer(@PathVariable("id") Long id) { 
 			  offerService.deleteOffer(id);
 			  return ResponseEntity.ok().body("offer deleted with success!");
 		  }
 	  
+		@PreAuthorize("hasAnyRole('ROLE_FREELANCER','ROLE_ADMIN')")
+		@RequestMapping(value = "/offerExpired", method = RequestMethod.DELETE)
+	 ResponseEntity<String> deleteExpiredOffer() { 
+			  offerService.deleteExpiredOffer();
+			  return ResponseEntity.ok().body("deleted with sucess the expired offers!");
+		  }
 	  
+	  
+		
 	  
 }

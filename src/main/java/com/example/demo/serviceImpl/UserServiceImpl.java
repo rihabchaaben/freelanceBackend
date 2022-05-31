@@ -2,15 +2,17 @@ package com.example.demo.serviceImpl;
 
 import java.util.List;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.exceptions.CategoryNotFoundException;
-import com.example.demo.exceptions.FreelancerNotFoundException;
 import com.example.demo.exceptions.UserNotFoundException;
-import com.example.demo.models.Category;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.services.UserDetailImpl;
 import com.example.demo.services.UserService;
 @Service
 public class UserServiceImpl implements UserService  {
@@ -40,5 +42,12 @@ public class UserServiceImpl implements UserService  {
 		userRepository.delete(user);
 		
 	}
-
+	@Override
+	public User currentUser()   {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+ 		String username= ((UserDetails) principal).getUsername();
+ 		
+ 		return userRepository.findByUsername(username).orElseThrow(() -> new
+				  UserNotFoundException("user not found "));
+	}
 }
